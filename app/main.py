@@ -2,7 +2,9 @@ from flask import Flask, jsonify, render_template, request
 from datetime import datetime, timezone
 from app.engine import analyze_transaction
 
-app = Flask(__name__)
+# templates/ and static/ live at the repository root, while this module is in app/.
+# Explicitly configure both folders so the app works correctly on Render and locally.
+app = Flask(__name__, template_folder='../templates', static_folder='../static')
 
 DEMO_HISTORY = {'avg_amount': 650}
 recent = []
