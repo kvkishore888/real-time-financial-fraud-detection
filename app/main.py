@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, render_template, request
 from datetime import datetime, timezone
+import csv
+import io
 from app.engine import analyze_transaction
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
@@ -61,6 +63,40 @@ def analyze():
         })
     except (TypeError, ValueError) as e:
         return jsonify({'error': str(e)}), 400
+
+@app.post('/api/analyze-dataset')
+def analyze_dataset():
+    uploaded = request.files.get('file')
+    if not uploaded or not uploaded.filename:
+        return jsonify({'error': 'Please upload a CSV dataset.'}), 400
+    if not uploaded.filename.lower().endswith('.csv'):
+        return jsonify({'error': 'Only CSV files are supported.'}), 400
+    try:
+        text = uploaded.read().decode('utf-8-sig')
+        reader = csv.DictReader(io.StringIO(text))
+        if not reader.fieldnames or 'amount' not in reader.fieldnames:
+            raise ValueError('CSV must contain an amount column.')
+        results = []
+        counts = {'ALLOW': 0, 'STEP-UP': 0, 'REVIEW': 0, 'BLOCK': 0}
+        for index, row in enumerate(reader):
+            if index >= 1000:
+                break
+            tx = {k: v for k, v in row.items() if v not in (None, '')}
+            result = analyze_transaction(tx, DEMO_HISTORY)
+            counts[result.decision] += 1
+            results.append({
+                'row': index + 2,
+                'amount': float(tx.get('amount', 0)),
+                'score': result.score,
+                'decision': result.decision,
+                'risk_level': result.risk_level,
+                'reasons': result.reasons,
+            })
+        return jsonify({'filename': uploaded.filename, 'rows_processed': len(results), 'summary': counts, 'results': results})
+    except UnicodeDecodeError:
+        return jsonify({'error': 'CSV must be UTF-8 encoded.'}), 400
+    except (TypeError, ValueError) as e:
+        return jsonify({'error': f'Invalid dataset: {e}'}), 400
 
 @app.get('/api/events')
 def events():
