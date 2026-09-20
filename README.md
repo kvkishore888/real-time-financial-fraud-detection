@@ -24,7 +24,7 @@ Python 3.11+, Flask, HTML/CSS/JavaScript, pytest
 ```bash
 python -m venv .venv
 # Windows
-.venv\\Scripts\\activate
+.venv\Scripts\activate
 # macOS/Linux
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -34,9 +34,8 @@ python -m app.main
 Open http://127.0.0.1:5000
 
 ## API
-`GET /api/health`
-
-`POST /api/analyze`
+- `GET /api/health`
+- `POST /api/analyze`
 
 Example request:
 ```json
