@@ -9,3 +9,9 @@ def test_risky_transaction_blocks():
     r=analyze_transaction({'amount':5000,'transactions_last_10m':8,'amount_last_10m':10000,'distance_from_home_km':1200,'account_age_days':5,'merchant_risk':.95,'hour':2,'new_device':True},{'avg_amount':650})
     assert r.decision=='BLOCK'
     assert r.score >= 70
+
+def test_network_relationships_raise_risk():
+    normal = analyze_transaction({'amount':650,'transactions_last_10m':1,'amount_last_10m':650,'distance_from_home_km':5,'account_age_days':800,'merchant_risk':.05,'hour':14,'new_device':False,'related_accounts':0,'shared_devices':0,'shared_ips':0,'shared_beneficiaries':0},{'avg_amount':650})
+    linked = analyze_transaction({'amount':650,'transactions_last_10m':1,'amount_last_10m':650,'distance_from_home_km':5,'account_age_days':800,'merchant_risk':.05,'hour':14,'new_device':False,'related_accounts':5,'shared_devices':3,'shared_ips':3,'shared_beneficiaries':4},{'avg_amount':650})
+    assert linked.signals['network_relationship'] == 100.0
+    assert linked.score > normal.score
