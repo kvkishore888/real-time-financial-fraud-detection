@@ -82,6 +82,8 @@ def analyze_dataset():
             if index >= 1000:
                 break
             tx = {k: v for k, v in row.items() if v not in (None, '')}
+            if 'new_device' in tx:
+                tx['new_device'] = str(tx['new_device']).strip().lower() in ('true', '1', 'yes', 'y')
             result = analyze_transaction(tx, DEMO_HISTORY)
             counts[result.decision] += 1
             results.append({
