@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: fraudshield
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app.main:app
+    healthCheckPath: /api/health
