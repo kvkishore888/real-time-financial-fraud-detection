@@ -19,8 +19,9 @@
   </div>
 </header>
 
-<main>
-  <section class="hero">
+<main id="appMain">
+  <div class="layout-bar"><div><span class="layout-kicker">INTERACTIVE CANVAS</span><strong>Choose your workspace</strong></div><div class="layout-switcher" role="group" aria-label="Choose dashboard layout"><button type="button" class="layout-btn active" data-layout="balanced">Balanced</button><button type="button" class="layout-btn" data-layout="focus">Focus</button><button type="button" class="layout-btn" data-layout="wide">Wide</button><button type="button" class="layout-btn" data-layout="compact">Compact</button></div><span class="cursor-hint">Move your mouse to shift the canvas</span></div>
+  <section class="hero interactive-card" data-depth="10">
     <div class="hero-copy">
       <p class="eyebrow">REAL-TIME TRANSACTION INTELLIGENCE</p>
       <h1>Detect risk.<br><span>Explain every decision.</span></h1>
@@ -35,14 +36,14 @@
     </div>
   </section>
 
-  <section class="overview">
+  <section class="overview interactive-card" data-depth="6">
     <div class="metric"><span class="metric-icon">01</span><div><small>Signals monitored</small><strong>10</strong></div></div>
     <div class="metric"><span class="metric-icon">02</span><div><small>Decision types</small><strong>4</strong></div></div>
     <div class="metric"><span class="metric-icon">03</span><div><small>Batch limit</small><strong>1,000</strong></div></div>
     <div class="metric"><span class="metric-icon">04</span><div><small>Detection mode</small><strong>Hybrid AI</strong></div></div>
   </section>
 
-  <section class="panel upload-panel">
+  <section class="panel upload-panel interactive-card" data-depth="5">
     <div class="section-heading">
       <div><p class="section-kicker">BATCH INTELLIGENCE</p><h2>Analyze a transaction dataset</h2><span class="muted">Upload up to 1,000 CSV rows and review every decision in one view.</span></div>
       <button class="secondary" type="button" onclick="downloadSample()">↓ Sample CSV</button>
@@ -64,7 +65,7 @@
   </section>
 
   <section class="workspace">
-    <div class="panel simulator">
+    <div class="panel simulator interactive-card" data-depth="7">
       <div class="section-heading">
         <div><p class="section-kicker">LIVE SIMULATION</p><h2>Transaction simulator</h2><span class="muted">Tune individual signals and inspect the resulting action.</span></div>
         <button class="secondary" type="button" onclick="loadDemo()">Load risky demo</button>
@@ -95,7 +96,7 @@
       </form>
     </div>
 
-    <div class="panel decision-panel">
+    <div class="panel decision-panel interactive-card" data-depth="9">
       <div class="section-heading">
         <div><p class="section-kicker">DECISION EXPLANATION</p><h2>Why this decision?</h2><span class="muted">Evidence behind the current risk score.</span></div>
       </div>
@@ -107,7 +108,7 @@
     </div>
   </section>
 
-  <section class="panel events">
+  <section class="panel events interactive-card" data-depth="5">
     <div class="section-heading"><div><p class="section-kicker">AUDIT TRAIL</p><h2>Recent decisions</h2><span class="muted">Last 20 analyzed transactions</span></div><span class="live compact"><i></i> LIVE</span></div>
     <div class="table-wrap"><table>
       <thead><tr><th>Time</th><th>Amount</th><th>Risk score</th><th>Decision</th></tr></thead>
