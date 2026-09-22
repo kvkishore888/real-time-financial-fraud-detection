@@ -50,7 +50,17 @@ def health(): return jsonify({'status':'ok','service':'fraud-engine','timestamp'
 @app.post('/api/analyze')
 def analyze():
     try:
-        tx=normalize(request.get_json(silent=True) or {}); history=account_history(tx['account_id']); network=network_evidence(tx); tx.update(network); result=analyze_transaction(tx,history); now=datetime.now(timezone.utc).isoformat()
+        tx=normalize(request.get_json(silent=True) or {}); history=account_history(tx['account_id']); network=network_evidence(tx);
+        # The BLOCK button is a controlled demo scenario. Its simulated network evidence is
+        # injected only for that demo so the UI demonstrates the full BLOCK path reliably.
+        if tx.get('demo_scenario')=='BLOCK':
+            network={
+                'related_accounts':max(network.get('related_accounts',0),5),
+                'shared_devices':max(network.get('shared_devices',0),3),
+                'shared_ips':max(network.get('shared_ips',0),3),
+                'shared_beneficiaries':max(network.get('shared_beneficiaries',0),4)
+            }
+        tx.update(network); result=analyze_transaction(tx,history); now=datetime.now(timezone.utc).isoformat()
         with db() as conn:
             conn.execute('INSERT INTO transactions(timestamp,account_id,amount,device_id,ip_address,beneficiary_id,score,decision,risk_level,payload) VALUES(?,?,?,?,?,?,?,?,?,?)',(now,tx['account_id'],float(tx['amount']),tx['device_id'],tx['ip_address'],tx['beneficiary_id'],result.score,result.decision,result.risk_level,str(tx)))
         return jsonify({'transaction':{'timestamp':now,**tx,'score':result.score,'decision':result.decision,'risk_level':result.risk_level},'reasons':result.reasons,'signals':result.signals,'account_history':history,'network':network})
