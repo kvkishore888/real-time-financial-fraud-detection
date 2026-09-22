@@ -1,5 +1,21 @@
 const form=document.querySelector('#form');
-function loadDemo(){const vals={amount:4800,transactions_last_10m:7,amount_last_10m:9200,distance_from_home_km:850,account_age_days:12,merchant_risk:.82,hour:1,new_device:'true',related_accounts:5,shared_devices:3,shared_ips:2,shared_beneficiaries:4,account_id:'acct-risky',device_id:'device-shared',ip_address:'ip-shared',beneficiary_id:'beneficiary-shared'};Object.entries(vals).forEach(([k,v])=>form.elements[k].value=v);form.requestSubmit()}
+const DEMO_PROFILES={
+  'ALLOW':{amount:850,transactions_last_10m:1,amount_last_10m:850,distance_from_home_km:8,account_age_days:420,merchant_risk:.10,hour:14,new_device:'false'},
+  'STEP-UP':{amount:2500,transactions_last_10m:3,amount_last_10m:5000,distance_from_home_km:80,account_age_days:300,merchant_risk:.25,hour:14,new_device:'true'},
+  'REVIEW':{amount:5000,transactions_last_10m:5,amount_last_10m:9000,distance_from_home_km:350,account_age_days:40,merchant_risk:.60,hour:2,new_device:'true'},
+  'BLOCK':{amount:10000,transactions_last_10m:8,amount_last_10m:20000,distance_from_home_km:500,account_age_days:5,merchant_risk:.90,hour:1,new_device:'true'}
+};
+function loadDecisionDemo(decision){
+  const vals={...DEMO_PROFILES[decision],
+    account_id:'demo-'+decision.toLowerCase().replace('-','')+'-'+Date.now(),
+    device_id:'device-'+decision.toLowerCase().replace('-','')+'-'+Date.now(),
+    ip_address:'ip-'+decision.toLowerCase().replace('-','')+'-'+Date.now(),
+    beneficiary_id:'beneficiary-'+decision.toLowerCase().replace('-','')+'-'+Date.now(),
+    related_accounts:0,shared_devices:0,shared_ips:0,shared_beneficiaries:0};
+  Object.entries(vals).forEach(([k,v])=>{if(form.elements[k])form.elements[k].value=v});
+  form.requestSubmit();
+}
+function loadDemo(){loadDecisionDemo('BLOCK')}
 form.addEventListener('submit',async e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form));['amount','transactions_last_10m','amount_last_10m','distance_from_home_km','account_age_days','merchant_risk','hour'].forEach(k=>data[k]=Number(data[k]));data.new_device=data.new_device==='true';const res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const out=await res.json();if(!res.ok)return alert(out.error);render(out);showDecisionPopup(out);loadEvents()});
 
 function showDecisionPopup(o){
