@@ -11,9 +11,12 @@ function loadDecisionDemo(decision){
     device_id:'device-'+decision.toLowerCase().replace('-','')+'-'+Date.now(),
     ip_address:'ip-'+decision.toLowerCase().replace('-','')+'-'+Date.now(),
     beneficiary_id:'beneficiary-'+decision.toLowerCase().replace('-','')+'-'+Date.now(),
-    related_accounts:0,shared_devices:0,shared_ips:0,shared_beneficiaries:0};
+    related_accounts:decision==='BLOCK'?5:0,
+    shared_devices:decision==='BLOCK'?3:0,
+    shared_ips:decision==='BLOCK'?3:0,
+    shared_beneficiaries:decision==='BLOCK'?4:0};
   Object.entries(vals).forEach(([k,v])=>{if(form.elements[k])form.elements[k].value=v});
-  form.requestSubmit();
+  // Demo buttons only load the scenario. The popup appears after the user clicks Analyze transaction.
 }
 function loadDemo(){loadDecisionDemo('BLOCK')}
 form.addEventListener('submit',async e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form));['amount','transactions_last_10m','amount_last_10m','distance_from_home_km','account_age_days','merchant_risk','hour'].forEach(k=>data[k]=Number(data[k]));data.new_device=data.new_device==='true';const res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const out=await res.json();if(!res.ok)return alert(out.error);render(out);showDecisionPopup(out);loadEvents()});
