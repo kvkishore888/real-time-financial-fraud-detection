@@ -3,7 +3,7 @@ const DEMO_PROFILES={
   'ALLOW':{amount:850,transactions_last_10m:1,amount_last_10m:850,distance_from_home_km:8,account_age_days:420,merchant_risk:.10,hour:14,new_device:'false'},
   'STEP-UP':{amount:2500,transactions_last_10m:3,amount_last_10m:5000,distance_from_home_km:80,account_age_days:300,merchant_risk:.25,hour:14,new_device:'true'},
   'REVIEW':{amount:5000,transactions_last_10m:5,amount_last_10m:9000,distance_from_home_km:350,account_age_days:40,merchant_risk:.60,hour:2,new_device:'true'},
-  'BLOCK':{amount:10000,transactions_last_10m:8,amount_last_10m:20000,distance_from_home_km:500,account_age_days:5,merchant_risk:.90,hour:1,new_device:'true'}
+  'BLOCK':{amount:25000,transactions_last_10m:12,amount_last_10m:50000,distance_from_home_km:1000,account_age_days:1,merchant_risk:1.00,hour:1,new_device:'true'}
 };
 function loadDecisionDemo(decision){
   const vals={...DEMO_PROFILES[decision],
@@ -14,7 +14,8 @@ function loadDecisionDemo(decision){
     related_accounts:decision==='BLOCK'?5:0,
     shared_devices:decision==='BLOCK'?3:0,
     shared_ips:decision==='BLOCK'?3:0,
-    shared_beneficiaries:decision==='BLOCK'?4:0};
+    shared_beneficiaries:decision==='BLOCK'?4:0,
+    device_change_days:decision==='BLOCK'?1:365};
   Object.entries(vals).forEach(([k,v])=>{if(form.elements[k])form.elements[k].value=v});
   // Demo buttons only load the scenario. The popup appears after the user clicks Analyze transaction.
 }
